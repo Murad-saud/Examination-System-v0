@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSys.Web", "..\Examination-System\ExamSys.Web.csproj", "{7E6796A3-ADE3-669F-C66C-DEB7ACAA0AED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSys.Application", "..\ExamSys.Application\ExamSys.Application.csproj", "{2FB39BB8-9942-8510-EFE1-06B2A0708064}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSys.Core", "..\ExamSys.Core\ExamSys.Core.csproj", "{7971110F-2566-4634-BCF3-CF5B40EE2B33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSys.Infrastructure", "..\ExamSys.infrastructure\ExamSys.Infrastructure.csproj", "{CEEB44EA-67E6-E367-14CE-FB25A054C8C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSys.Tests", "ExamSys.Tests\ExamSys.Tests.csproj", "{4448FBEF-491D-4FC9-949A-07890177E7F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSys.Web.IntegrationTests", "ExamSys.Web.IntegrationTests\ExamSys.Web.IntegrationTests.csproj", "{D3EF4ED8-FE02-4280-BCCA-C3ECA9B2C5C9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E6796A3-ADE3-669F-C66C-DEB7ACAA0AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E6796A3-ADE3-669F-C66C-DEB7ACAA0AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E6796A3-ADE3-669F-C66C-DEB7ACAA0AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E6796A3-ADE3-669F-C66C-DEB7ACAA0AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FB39BB8-9942-8510-EFE1-06B2A0708064}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FB39BB8-9942-8510-EFE1-06B2A0708064}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FB39BB8-9942-8510-EFE1-06B2A0708064}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FB39BB8-9942-8510-EFE1-06B2A0708064}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7971110F-2566-4634-BCF3-CF5B40EE2B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7971110F-2566-4634-BCF3-CF5B40EE2B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7971110F-2566-4634-BCF3-CF5B40EE2B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7971110F-2566-4634-BCF3-CF5B40EE2B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEEB44EA-67E6-E367-14CE-FB25A054C8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEEB44EA-67E6-E367-14CE-FB25A054C8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEEB44EA-67E6-E367-14CE-FB25A054C8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEEB44EA-67E6-E367-14CE-FB25A054C8C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4448FBEF-491D-4FC9-949A-07890177E7F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4448FBEF-491D-4FC9-949A-07890177E7F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4448FBEF-491D-4FC9-949A-07890177E7F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4448FBEF-491D-4FC9-949A-07890177E7F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3EF4ED8-FE02-4280-BCCA-C3ECA9B2C5C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3EF4ED8-FE02-4280-BCCA-C3ECA9B2C5C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3EF4ED8-FE02-4280-BCCA-C3ECA9B2C5C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3EF4ED8-FE02-4280-BCCA-C3ECA9B2C5C9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82DFF2C1-8205-47AF-8353-D3434D1D631E}
+	EndGlobalSection
+EndGlobal
