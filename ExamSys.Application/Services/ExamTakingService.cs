@@ -222,7 +222,7 @@ namespace ExamSys.Application.Services
                             existingAnswer.SelectedAnswerId = request.SelectedAnswerId;
                             updatedAnswers.Add(existingAnswer);
                         }
-                        // If no change, do nothing - no DB call needed
+                        // If no change, do nothing
                     }
                     else
                     {
@@ -244,7 +244,6 @@ namespace ExamSys.Application.Services
                     return Result.Success();
                 }
 
-                // ✅ FIXED: Proper transaction handling
                 await _unitOfWork.BeginTransactionAsync();
                 try
                 {
@@ -272,7 +271,7 @@ namespace ExamSys.Application.Services
                     await _unitOfWork.RollbackTransactionAsync();
                     _logger.LogError(ex, "Transaction failed while saving answers for participant exam {ParticipantExamId}",
                         participantExamId);
-                    throw; // Re-throw to be caught by outer catch
+                    throw;
                 }
             }
             catch (Exception ex)
