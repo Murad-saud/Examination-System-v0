@@ -1,0 +1,178 @@
+﻿@using ExamSys.Application.DTOs.User
+@model UserManagementVMv2
+
+
+@{
+    string SortByCheck(string value)
+    {
+        if (value == Model.Filters.SearchBy)
+            return "selected";
+        return "";
+    }
+
+    string RoleCheck(string value)
+    {
+        if (value == Model.Filters.Role)
+            return "selected";
+        return "";
+    }
+
+    // Helper function to get role badge color
+    string GetRoleBadgeClass(string roleName)
+    {
+        switch (roleName.ToLower())
+        {
+            case "admin":
+                return "bg-purple-100 text-purple-800";
+            case "instructor":
+                return "bg-blue-100 text-blue-800";
+            case "participant":
+                return "bg-green-100 text-green-800";
+            default:
+                return "bg-gray-100 text-gray-800";
+        }
+    }
+}
+
+
+<!-- Main content area - optimized for sidebar layout -->
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">User Management</h1>
+        <p class="mt-1 text-sm text-slate-500">Manage system users and permissions</p>
+    </div>
+
+    <!-- Simplified Filter Section -->
+    <div class="mb-4 rounded-md border border-slate-200 bg-slate-50 p-3">
+        <form asp-controller="Admin"
+              asp-action="UsersManagement"
+              method="get"
+              class="flex flex-col items-end gap-3 sm:flex-row">
+
+            <div class="w-full flex-1 sm:w-auto">
+                <label for="sort-by" class="mb-1 block text-xs font-medium text-slate-600">Sort by</label>
+                <select name="searchBy" id="sort-by" class="w-full rounded border border-slate-300 p-1.5 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <option value="fullname" selected="@(Model.Filters.SearchBy == "fullname")">Name</option>
+                    <option value="emailaddress" selected="@(Model.Filters.SearchBy == "emailaddress")">Email</option>
+                </select>
+            </div>
+
+            <div class="w-full flex-1 sm:w-auto">
+                <label for="roles" class="mb-1 block text-xs font-medium text-slate-600">Role</label>
+                <select name="role" id="roles" class="w-full rounded border border-slate-300 p-1.5 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <option value="" selected>All Role</option>
+                    <option value="admin" selected="@(Model.Filters.Role == "admin")">Admin</option>
+                    <option value="instructor" selected="@(Model.Filters.Role == "instructor")">Instructor</option>
+                    <option value="participant" selected="@(Model.Filters.Role == "participant")">Participant</option>
+                </select>
+            </div>
+
+            <div class="w-full flex-grow sm:w-auto">
+                <label for="search" class="mb-1 block text-xs font-medium text-slate-600">Search</label>
+                <input name="keywords" type="text" value="@Model.Filters.Keywords" id="search" placeholder="Enter search term..." class="w-full rounded border border-slate-300 p-1.5 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+            </div>
+
+            <div class="flex w-full gap-2 sm:w-auto">
+                <button type="submit" class="w-full rounded bg-sky-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-sky-700 focus:ring-1 focus:ring-sky-300 sm:w-auto">
+                    Search
+                </button>
+                <button type="button" class="w-full rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-green-700 focus:ring-1 focus:ring-green-300 sm:w-auto">
+                    Add User
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Users Table -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="flex items-center justify-between bg-slate-100 px-4 py-2">
+            <h2 class="text-sm font-medium text-slate-700">Users List</h2>
+            <span class="text-xs text-slate-500">@Model.Users.Count users found</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            @if (Model.Users.Count > 0)
+            {
+                <table class="w-full text-left text-sm">
+                    <!-- Table Header -->
+                    <thead class="bg-slate-50 text-slate-700">
+                        <tr>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">#</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Full Name</th>
+                            <th class="hidden border-b border-slate-200 px-3 py-2 font-medium md:table-cell">Email Address</th>
+                            <th class="hidden border-b border-slate-200 px-3 py-2 font-medium md:table-cell">Role</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Date of Birth</th>
+                            <th class="hidden border-b border-slate-200 px-3 py-2 font-medium sm:table-cell">Date Joined</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Action</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody>
+                        @{
+                            int counter = 1;
+                            // Sort users by role: Admins first, then Instructors, then Participants
+                            var sortedUsers = Model.Users.OrderBy(u =>
+                            u.RoleName == "Admin" ? 1 :
+                            u.RoleName == "Instructor" ? 2 : 3)
+                            .ThenBy(u => u.FullName)
+                            .ToList();
+
+                            foreach (var user in sortedUsers)
+                            {
+                                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="px-3 py-2">@counter</td>
+                                    <td class="px-3 py-2 font-medium text-slate-800">@user.FullName</td>
+                                    <td class="hidden px-3 py-2 md:table-cell">@user.Email</td>
+                                    <td class="hidden px-3 py-2 md:table-cell">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium @GetRoleBadgeClass(user.RoleName)">
+                                            @user.RoleName
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-2">@user.DateOfBirth</td>
+                                    <td class="hidden px-3 py-2 sm:table-cell">@user.DateJoined</td>
+                                    <td class="px-3 py-2">
+                                        <div class="flex space-x-2">
+                                            <a asp-controller="Admin" asp-action="EditUser" asp-route-userId="@user.Id" class="text-xs text-sky-600 hover:text-sky-800">
+                                                Edit
+                                            </a>
+                                            <a asp-controller="Admin" asp-action="RemoveUser" asp-route-userId="@user.Id" class="text-xs text-red-600 hover:text-red-800">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="mt-4 flex items-center justify-between px-4 py-2">
+                    <div class="text-xs text-slate-600">
+                        Showing 1 to @Model.Users.Count of @Model.Users.Count entries
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Previous
+                        </button>
+                        <button class="rounded bg-sky-600 px-2 py-1 text-xs font-medium text-white">
+                            1
+                        </button>
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mx-auto w-full py-6 text-center text-sm text-slate-600">No results matched</div>
+            }
+        </div>
+    </div>
+</div>

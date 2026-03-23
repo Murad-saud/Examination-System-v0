@@ -1,0 +1,131 @@
+﻿@using ExamSys.Application.DTOs.Course
+@model List<CourseTableItemDto>
+
+<!-- Main content area - optimized for sidebar layout -->
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">Course Management</h1>
+        <p class="mt-1 text-sm text-slate-500">Manage system Courses</p>
+    </div>
+
+    <!-- Simplified Filter Section -->
+    <div class="mb-4 rounded-md border border-slate-200 bg-slate-50 p-3">
+        <form asp-controller="Admin"
+              asp-action="UsersManagement"
+              method="get"
+              class="flex flex-col items-end gap-3 sm:flex-row">
+
+            <div class="w-full flex-1 sm:w-auto">
+                <label for="sort-by" class="mb-1 block text-xs font-medium text-slate-600">Sort by</label>
+                <select name="searchBy" id="sort-by" class="w-full rounded border border-slate-300 p-1.5 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <option value="" selected disabled>Name</option>
+                    <option value="fullname">Name</option>
+                    <option value="emailaddress">Email</option>
+                    <option value="phonenumber">Phone Number</option>
+                </select>
+            </div>
+
+            <div class="w-full flex-1 sm:w-auto">
+                <label for="roles" class="mb-1 block text-xs font-medium text-slate-600">Instructor</label>
+                <select name="role" id="roles" class="w-full rounded border border-slate-300 p-1.5 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <option value="" selected disabled>All</option>
+                    <option value="admin">Admin</option>
+                    <option value="instructor">Instructor</option>
+                    <option value="participant">Participant</option>
+                </select>
+            </div>
+
+            <div class="w-full flex-grow sm:w-auto">
+                <label for="search" class="mb-1 block text-xs font-medium text-slate-600">Search</label>
+                <input name="keywords" type="text" id="search" placeholder="Enter search term..." class="w-full rounded border border-slate-300 p-1.5 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+            </div>
+
+            <div class="flex w-full gap-2 sm:w-auto">
+                <button type="submit" class="w-full rounded bg-sky-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-sky-700 focus:ring-1 focus:ring-sky-300 sm:w-auto">
+                    Search
+                </button>
+                <button type="button" class="w-full rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-green-700 focus:ring-1 focus:ring-green-300 sm:w-auto">
+                    Add Course
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Courses Table -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="flex items-center justify-between bg-slate-100 px-4 py-2">
+            <h2 class="text-sm font-medium text-slate-700">Courses List</h2>
+            <span class="text-xs text-slate-500">@Model.Count courses found</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            @if (Model.Count > 0)
+            {
+                <table class="w-full text-left text-sm">
+                    <!-- Table Header -->
+                    <thead class="bg-slate-50 text-slate-700">
+                        <tr>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">#</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Course Name</th>
+                            <th class="hidden border-b border-slate-200 px-3 py-2 font-medium md:table-cell">Instructor Name</th>
+                            <th class="hidden border-b border-slate-200 px-3 py-2 font-medium md:table-cell">Date Created</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Action</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody>
+                        @{
+                            int counter = 1;
+                            foreach (var course in Model)
+                            {
+                                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="px-3 py-2">@counter</td>
+                                    <td class="px-3 py-2">@course.CourseName</td>
+                                    <td class="hidden px-3 py-2 md:table-cell">@course.InstructorName</td>
+                                    <td class="hidden px-3 py-2 md:table-cell">@course.CourseDateCreated.ToString("MMMM dd, yyyy")</td>
+                                    <td class="px-3 py-2">
+                                        <div class="flex space-x-2">
+                                            <a asp-controller="Courses" asp-action="UpdateCourse" asp-route-courseId="@course.CourseId" class="text-xs text-sky-600 hover:text-sky-800">
+                                                Edit
+                                            </a>
+                                            <a asp-controller="Courses" asp-action="RemoveCourse" asp-route-courseId="@course.CourseId" class="text-xs text-red-600 hover:text-red-800">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="mt-4 flex items-center justify-between px-4 py-2">
+                    <div class="text-xs text-slate-600">
+                        Showing 1 to @Model.Count of @Model.Count entries
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Previous
+                        </button>
+                        <button class="rounded bg-sky-600 px-2 py-1 text-xs font-medium text-white">
+                            1
+                        </button>
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mx-auto w-full py-6 text-center text-sm text-slate-600">No results matched</div>
+            }
+        </div>
+    </div>
+</div>

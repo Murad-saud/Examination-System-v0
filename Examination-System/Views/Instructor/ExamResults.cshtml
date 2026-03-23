@@ -1,0 +1,86 @@
+﻿@model ExamResultsDto
+
+<!-- Main content area -->
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">@Model.ExamTitle Results</h1>
+        <p class="mt-1 text-sm text-slate-500">View all participants results for the exam</p>
+    </div>
+
+    <!-- Simplified Filter Section -->
+    <!-- Exams Table -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="flex items-center justify-between bg-slate-100 px-4 py-2">
+            <h2 class="text-sm font-medium text-slate-700">Results List</h2>
+            <span class="text-xs text-slate-500">@Model.Results.Count participant found</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            @if (Model.Results.Count > 0)
+            {
+                <table class="w-full text-left text-sm">
+                    <!-- Table Header -->
+                    <thead class="bg-slate-50 text-slate-700">
+                        <tr>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">#</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Participant Name</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Score</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Correct Answers</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Percentage</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody>
+                        @{
+                            int counter = 1;
+                            foreach (var result in Model.Results)
+                            {
+                                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="px-3 py-2">@counter</td>
+                                    <td class="px-3 py-2 font-medium text-slate-800">@result.ParticipantName</td>
+                                    <td class="px-3 py-2">@result.Score</td>
+                                    <td class="px-3 py-2">@result.CorrectAnswersCount</td>
+                                    <td class="px-3 py-2">@result.FinalScorePercentage</td>
+                                    <td class="px-3 py-2">
+                                        <a asp-controller="Instructor" asp-action="ParticipantExamPage" asp-route-examId="@Model.ExamId" asp-route-participantExamId="@result.ParticipantExamId"
+                                           class="text-sm text-sky-600 hover:text-sky-800">
+                                                Review
+                                        </a>
+
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                <div class="mt-4 flex items-center justify-between px-4 py-2">
+                    <div class="text-xs text-slate-600">
+                        Showing 1 to 6 of 6 entries
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Previous
+                        </button>
+                        <button class="rounded bg-sky-600 px-2 py-1 text-xs font-medium text-white">
+                            1
+                        </button>
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mx-auto w-full py-6 text-center text-sm text-slate-600">No exams found</div>
+            }
+        </div>
+    </div>
+</div>

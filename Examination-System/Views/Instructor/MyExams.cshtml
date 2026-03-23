@@ -1,0 +1,195 @@
+﻿@model MyExamsVM
+
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">Instructor <span class="text-slate-500">/ My Exams</span></h1>
+        <p class="mt-1 text-sm text-slate-500">Manage your exams and view results</p>
+    </div>
+
+    <!-- Simplified Filter Section -->
+    <div class="mb-6 rounded-md border border-slate-200 bg-slate-50 p-4">
+        <form asp-controller="Instructor" asp-action="MyExams" method="get"
+              class="flex flex-col items-end gap-4 md:flex-row">
+
+            <!-- Course Name -->
+            <div class="w-full md:w-auto">
+                <label for="course-name" class="mb-1 block text-xs font-medium text-slate-700">Course</label>
+                <select name="coursename" id="course-name"
+                        class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <option value="" selected>All</option>
+                    @foreach (var course in Model.AvailableCourses)
+                    {
+                        <option value="@course.CourseName" selected="@(Model.FilterInputs.CourseName == course.CourseName)">@course.CourseName</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Exam Status -->
+            <div class="w-full md:w-auto">
+                <label for="exam-status" class="mb-1 block text-xs font-medium text-slate-700">Exam Status</label>
+                <select name="examstatus" id="exam-status"
+                        class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <option value="-1" selected="@(Model.FilterInputs.ExamStatus == -1)">All</option>
+                    <option value="0" selected="@(Model.FilterInputs.ExamStatus == 0)">Draft</option>
+                    <option value="1" selected="@(Model.FilterInputs.ExamStatus == 1)">Preparing</option>
+                    <option value="2" selected="@(Model.FilterInputs.ExamStatus == 2)">Pending</option>
+                    <option value="3" selected="@(Model.FilterInputs.ExamStatus == 3)">Scheduled</option>
+                    <option value="4" selected="@(Model.FilterInputs.ExamStatus == 4)">Rejected</option>
+                    <option value="5" selected="@(Model.FilterInputs.ExamStatus == 5)">Cancelled</option>
+                    <option value="6" selected="@(Model.FilterInputs.ExamStatus == 6)">InProgress</option>
+                    <option value="7" selected="@(Model.FilterInputs.ExamStatus == 7)">Completed</option>
+                </select>
+            </div>
+
+            <!-- Search -->
+            <div class="w-full flex-grow md:w-auto">
+                <label for="search" class="mb-1 block text-xs font-medium text-slate-700">Search</label>
+                <input name="keywords" type="text" value="@Model.FilterInputs.Keywords" id="search" placeholder="Exam Title"
+                       class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex w-full gap-2 md:w-auto">
+                <button type="reset"
+                        class="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-100">
+                    Reset
+                </button>
+                <button type="submit"
+                        class="rounded bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:ring-1 focus:ring-sky-300">
+                    Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Exams Table -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="flex items-center justify-between bg-slate-100 px-4 py-2">
+            <h2 class="text-sm font-medium text-slate-700">Exams List</h2>
+            <span class="text-xs text-slate-500">@Model.Exams.Count exams found</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            @if (Model.Exams.Count > 0)
+            {
+                <table class="w-full text-left text-sm">
+                    <!-- Table Header -->
+                    <thead class="bg-slate-50 text-slate-700">
+                        <tr>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">#</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Title</th>
+                            <th class="hidden border-b border-slate-200 px-3 py-2 font-medium md:table-cell">Course Name</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Start Date</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Status</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Action</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody>
+                        @{
+                            string statusClass = "";
+                            int counter = 1;
+                            foreach (var exam in Model.Exams)
+                            {
+                                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="px-3 py-2">@counter</td>
+                                    <td class="px-3 py-2 font-medium text-slate-800">@exam.ExamTitle</td>
+                                    <td class="hidden px-3 py-2 md:table-cell">@exam.CourseName</td>
+                                    <td class="px-3 py-2">@exam.StartDate</td>
+                                    @switch (exam.Status)
+                                    {
+                                        case ExamSys.Core.Enums.ExamStatus.Draft:
+                                            statusClass = "inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800";
+                                        break;
+                                            case ExamSys.Core.Enums.ExamStatus.Preparing:
+                                            statusClass = "inline-flex items-center rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-medium text-violet-800";
+                                        break;
+                                            case ExamSys.Core.Enums.ExamStatus.Pending:
+                                            statusClass = "inline-flex items-center rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-medium text-rose-800";
+                                        break;
+                                            case ExamSys.Core.Enums.ExamStatus.Scheduled:
+                                            statusClass = "inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800";
+                                        break;
+                                            case ExamSys.Core.Enums.ExamStatus.Rejected:
+                                            statusClass = "inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800";
+                                        break;
+                                            case ExamSys.Core.Enums.ExamStatus.InProgress:
+                                            statusClass = "inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800";
+                                        break;
+                                            case ExamSys.Core.Enums.ExamStatus.Completed:
+                                            statusClass = "inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800";
+                                        break;
+                                        default:
+                                        statusClass = "bg-gray-100 text-gray-800";
+                                        break;
+                                    }
+                            
+
+                                    <td class="px-3 py-2">
+                                        <span class="@statusClass">@exam.Status.ToString()</span>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="flex space-x-2">
+                                            @if (exam.CanEdit)
+                                            {
+                                                <a asp-controller="Exam" asp-action="ExamBuilder" asp-route-examId="@exam.ExamId"
+                                                   class="text-xs text-sky-600 hover:text-sky-800">
+                                                    Edit
+                                                </a>
+                                            }
+                                            @if (exam.CanDelete)
+                                            {
+                                                <a asp-controller="Exam" asp-action="RemoveExam" asp-route-examId="@exam.ExamId"
+                                                   class="text-xs text-red-600 hover:text-red-800">
+                                                    Delete
+                                                </a>
+                                            }
+                                            @if (exam.CanViewResults)
+                                            {
+                                                <a asp-controller="Instructor" asp-action="ExamResults" asp-route-examId="@exam.ExamId"
+                                                   class="text-xs text-green-600 hover:text-green-800">
+                                                    Show Results
+                                                </a>
+                                            }
+                                            @if (exam.IsScheduled)
+                                            {
+                                                <span class="text-xs text-slate-500">No Actions Available</span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="mt-4 flex items-center justify-between px-4 py-2">
+                    <div class="text-xs text-slate-600">
+                        Showing 1 to @Model.Exams.Count of @Model.Exams.Count entries
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Previous
+                        </button>
+                        <button class="rounded bg-sky-600 px-2 py-1 text-xs font-medium text-white">
+                            1
+                        </button>
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mx-auto w-full py-6 text-center text-sm text-slate-600">No exams found</div>
+            }
+        </div>
+    </div>
+</div>

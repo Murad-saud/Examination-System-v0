@@ -1,0 +1,155 @@
+﻿@model ExamBuilderVM
+@{
+    string statusStyle = "";
+    if (Model.ExamStatus.ToLower() == "draft")
+        statusStyle = "inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800";
+    if (Model.ExamStatus.ToLower() == "preparing")
+        statusStyle = "inline-flex items-center rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-medium text-violet-800";
+}
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">Exam <span class="text-slate-500">/ Exam Builder</span></h1>
+        <p class="mt-1 text-sm text-slate-500">Manage exam questions and details</p>
+    </div>
+
+    <!-- Exam Details Header -->
+    <div class="mb-6 rounded-md border border-slate-200 bg-white p-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+                <h2 class="mb-2 text-lg font-semibold text-slate-800">Exam General Details</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <span class="w-32 text-sm font-medium text-slate-700">Exam Title:</span>
+                        <span class="text-sm text-slate-600">@Model.ExamTitle</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-32 text-sm font-medium text-slate-700">Course Name:</span>
+                        <span class="text-sm text-slate-600">@Model.CourseName</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-32 text-sm font-medium text-slate-700">Status:</span>
+                        <span class="@statusStyle">@Model.ExamStatus.ToString()</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-32 text-sm font-medium text-slate-700">Start Date:</span>
+                        <span class="text-sm text-slate-600">@Model.StartDate</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-start md:justify-end">
+                <div class="flex flex-col gap-3 md:flex-row">
+                    <a asp-controller="Exam" asp-action="EditExamDetails" asp-route-examId="@Model.ExamId"
+                       class="rounded bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:ring-1 focus:ring-sky-300">
+                        Edit Exam Details
+                    </a>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+                    <a asp-controller="Exam" asp-action="SubmitExam" asp-route-examId="@Model.ExamId"
+                       class="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700 focus:ring-1 focus:ring-green-300">
+                        Submit Exam
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Question Button -->
+    <div class="mb-4 flex justify-end">
+        <a asp-route-examId="@Model.ExamId" asp-controller="Exam" asp-action="AddQuestion"
+           class="flex items-center text-sky-600 transition hover:text-sky-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Question
+        </a>
+    </div>
+
+    <!-- Questions Table -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="flex items-center justify-between bg-slate-100 px-4 py-2">
+            <h2 class="text-sm font-medium text-slate-700">Question Bank</h2>
+            <span class="text-xs text-slate-500">@Model.QuestionsCount questions found</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            @if (Model.QuestionsCount > 0)
+            {
+                <table class="w-full text-left text-sm">
+                    <!-- Table Header -->
+                    <thead class="bg-slate-50 text-slate-700">
+                        <tr>
+                            <th class="w-12 border-b border-slate-200 px-3 py-2 font-medium">#</th>
+                            <th class="border-b border-slate-200 px-3 py-2 font-medium">Question Text</th>
+                            <th class="w-24 border-b border-slate-200 px-3 py-2 font-medium">No Of Answers</th>
+                            <th class="w-24 border-b border-slate-200 px-3 py-2 font-medium">Weight</th>
+                            <th class="w-32 border-b border-slate-200 px-3 py-2 font-medium">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Table Body -->
+                    <tbody>
+                        @{
+                            int counter = 1;
+                            foreach (var question in Model.ExamQuestions)
+                            {
+                                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="px-3 py-2">@counter</td>
+                                    <td class="px-3 py-2">
+                                        <div class="font-medium text-slate-800">@question.QuestionText</div>
+                                    </td>
+                                    <td class="px-3 py-2">@question.AnswersCount</td>
+                                    <td class="px-3 py-2">@question.QuestionWeight</td>
+                                    <td class="px-3 py-2">
+                                        <div class="flex space-x-2">
+                                            <a asp-route-questionId="@question.QuestionId"
+                                               asp-controller="Exam" asp-action="UpdateQuestion"
+                                               class="text-xs text-sky-600 hover:text-sky-800">
+                                                Edit
+                                            </a>
+                                            <a asp-route-questionId="@question.QuestionId"
+                                               asp-route-examId="@Model.ExamId"
+                                               asp-controller="Exam" asp-action="RemoveQuestion"
+                                               class="text-xs text-red-600 hover:text-red-800">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="mt-4 flex items-center justify-between px-4 py-2">
+                    <div class="text-xs text-slate-600">
+                        Showing 1 to @Model.QuestionsCount of @Model.QuestionsCount entries
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Previous
+                        </button>
+                        <button class="rounded bg-sky-600 px-2 py-1 text-xs font-medium text-white">
+                            1
+                        </button>
+                        <button class="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mx-auto w-full py-6 text-center text-sm text-slate-600">No questions found</div>
+            }
+        </div>
+    </div>
+</div>

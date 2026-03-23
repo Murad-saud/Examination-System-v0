@@ -1,0 +1,50 @@
+﻿@using Examination_System.ViewModels.Course
+@model RemoveCourseVM
+
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">Course <span class="text-slate-500">/ Remove Course</span></h1>
+        <p class="mt-1 text-sm text-slate-500">Remove a course from the system</p>
+    </div>
+
+    <!-- Content box -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="border-b border-slate-200 bg-slate-100 px-4 py-3">
+            <h2 class="font-semibold text-slate-700">Course Details</h2>
+        </div>
+
+        <!-- Form body -->
+        <form asp-controller="Courses" asp-action="RemoveCourse" method="post" class="p-6">
+            <input asp-for="@Model.CourseId" hidden />
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <!-- Course Name -->
+                <div>
+                    <label class="mb-1 block text-sm font-medium text-slate-700">Course Name</label>
+                    <input value="@Model.CourseName" disabled type="text"
+                           class="w-full rounded border border-slate-300 bg-slate-50 p-2 text-sm text-slate-600">
+                </div>
+
+                <!-- Instructor Name -->
+                <div>
+                    <label class="mb-1 block text-sm font-medium text-slate-700">Instructor Name</label>
+                    <input value="@Model.InstructorName" disabled type="text"
+                           class="w-full rounded border border-slate-300 bg-slate-50 p-2 text-sm text-slate-600">
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end gap-3 border-t border-slate-200 pt-4">
+                <button type="button"
+                        class="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-100">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="rounded bg-red-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-red-700 focus:ring-1 focus:ring-red-300">
+                    Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

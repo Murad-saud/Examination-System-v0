@@ -1,0 +1,67 @@
+﻿@using Examination_System.Helpers.Constants
+@model RemoveUserVM
+
+@{
+    Layout = "_Empty";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-red-800 via-rose-600 to-rose-400">
+    <!-- Container -->
+    <div class="flex min-h-screen flex-col items-center justify-center">
+        <!-- Card Container -->
+        <form asp-asp-controller="Authentication" asp-action="RemoveUser"
+              class="w-[400px] rounded-md bg-gray-50 p-4 shadow-md">
+              <!-- Hidden ID -->
+              <input hidden asp-for="@Model.Id" />
+            <div class="flex flex-col">
+                <!-- Header -->
+                <h1 class="mx-auto px-20 text-3xl font-bold text-rose-500">
+                    Remove User
+                </h1>
+                <div class="mx-6 mb-4 mt-3 h-1 bg-rose-500"></div>
+                <!-- Full Name -->
+                <div class="flex flex-col space-y-1">
+                    <label for="name" class="mx-auto text-sm font-medium text-slate-600">Full Name</label>
+                    <input readonly asp-for="@Model.FullName" value="@Model.FullName" type="text" id="name"
+                           class="rounded-sm border border-rose-100 px-2 py-1 text-center text-gray-400 shadow-sm outline-none focus:border-2 focus:border-red-500">
+                </div>
+                <!-- Email Address -->
+                <div class="flex flex-col space-y-1">
+                    <label for="email" class="mx-auto text-sm font-medium text-slate-600">Email Address</label>
+                    <input readonly asp-for="@Model.Email" value="@Model.Email" type="email" id="email"
+                           class="rounded-sm border border-rose-100 px-2 py-1 text-center text-gray-400 shadow-sm outline-none focus:border-2 focus:border-red-500">
+                </div>
+                <!-- Dates wrapper -->
+                <div class="mt-2 flex justify-between">
+                    <!-- Date of birth -->
+                    <div class="flex flex-col space-y-1">
+                        <label for="dateOfBirth" class="mx-auto text-sm font-medium text-slate-600">Date Of Birth</label>
+                        <input readonly asp-for="@Model.DateOfBirth" value="@Model.DateOfBirth" type="text" id="dateOfBirth" class="w-[150px] rounded-sm border border-rose-100 px-2 py-1 text-center text-gray-400 shadow-sm outline-none focus:border-2 focus:border-red-500">
+                    </div>
+                    <!-- Date Created -->
+                    <div class="flex flex-col space-y-1">
+                        <label for="dateCreated" class="mx-auto text-sm font-medium text-slate-600">Date Created</label>
+                        <input readonly asp-for="@Model.DateCreated" value="@Model.DateCreated" type="text" id="dateCreated" class="w-[150px] rounded-sm border border-rose-100 px-2 py-1 text-center text-gray-400 shadow-sm outline-none focus:border-2 focus:border-red-500">
+                    </div>
+                </div>
+
+                <!-- Select Role -->
+                <div class="mx-auto my-2">
+                    <label class="text-sm font-medium text-slate-600" for="selection">User role : </label>
+                    <select asp-for="@Model.RoleName" class="rounded-sm px-2 text-sm text-slate-500 outline-none focus:border-2 focus:border-rose-500"
+                            id="selectin">
+                        <option value="@Model.RoleName" class="text-gray-400">@Model.RoleName</option>
+                    </select>
+                </div>
+
+
+                <button type="submit"
+                        class="mt-1 border-2 border-rose-500 bg-rose-500 py-2 text-gray-50 duration-100 hover:bg-opacity-0 hover:text-red-600">
+                    Remove
+                </button>
+
+
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+﻿@model CreateExamVM
+
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">Exam <span class="text-slate-500">/ Create New Exam</span></h1>
+        <p class="mt-1 text-sm text-slate-500">Create a new exam for your course</p>
+    </div>
+
+    <!-- Content box -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="border-b border-slate-200 bg-slate-100 px-4 py-3">
+            <h2 class="font-semibold text-slate-700">Exam Details</h2>
+        </div>
+
+        <!-- Form body -->
+        <form asp-controller="Exam" asp-action="CreateExam" method="post" class="p-6">
+            <input asp-for="@Model.FormInputs.InstructorId" hidden />
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <!-- Exam Title -->
+                <div>
+                    <label asp-for="@Model.FormInputs.ExamTitle" class="mb-1 block text-sm font-medium text-slate-700">Exam Title</label>
+                    <input asp-for="@Model.FormInputs.ExamTitle" type="text" placeholder="e.g. Final Term Exam"
+                           class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <span asp-validation-for="@Model.FormInputs.ExamTitle" class="text-xs text-red-500"></span>
+                </div>
+
+                <!-- Exam Course -->
+                <div>
+                    <label asp-for="@Model.FormInputs.CourseId" class="mb-1 block text-sm font-medium text-slate-700">Course</label>
+                    <select asp-for="@Model.FormInputs.CourseId"
+                            class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                        <option value="" selected disabled>-- Choose a Course --</option>
+                        @foreach (var course in Model.AvailableCourses)
+                        {
+                            <option value="@course.CourseId">@course.CourseName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="@Model.FormInputs.CourseId" class="text-xs text-red-500"></span>
+                </div>
+
+                <!-- Exam Start Date -->
+                <div>
+                    <label asp-for="@Model.FormInputs.StartDate" class="mb-1 block text-sm font-medium text-slate-700">Start Date</label>
+                    <input asp-for="@Model.FormInputs.StartDate" type="datetime-local"
+                           class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <span asp-validation-for="@Model.FormInputs.StartDate" class="text-xs text-red-500"></span>
+                </div>
+
+                <!-- Exam Duration -->
+                <div>
+                    <label asp-for="@Model.FormInputs.ExamDuration" class="mb-1 block text-sm font-medium text-slate-700">Duration (minutes)</label>
+                    <input asp-for="@Model.FormInputs.ExamDuration" type="number" placeholder="e.g 90"
+                           class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <span asp-validation-for="@Model.FormInputs.ExamDuration" class="text-xs text-red-500"></span>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end gap-3 border-t border-slate-200 pt-4">
+                <button type="reset"
+                        class="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-100">
+                    Reset
+                </button>
+                <button type="submit"
+                        class="rounded bg-sky-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:ring-1 focus:ring-sky-300">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

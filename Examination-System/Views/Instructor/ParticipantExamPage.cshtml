@@ -1,0 +1,177 @@
+﻿@model ParticipantExamPageDto
+
+@{
+    Layout = "_Empty";
+}
+
+@{
+    string getAnswerStyle(int questionId, int answerId)
+    {
+        var isSelected = Model.SavedAnswers.ContainsKey(questionId) && Model.SavedAnswers[questionId] == answerId;
+        var question = Model.PageQuestions.First(q => q.QuestionId == questionId);
+        var isCorrect = answerId == question.CorrectAnswerId;
+
+        if (isSelected && isCorrect)
+            return "border-green-500 bg-green-50 text-green-700";
+        else if (isSelected && !isCorrect)
+            return "border-red-500 bg-red-50 text-red-700";
+        else if (!isSelected && isCorrect)
+            return "border-green-300 bg-green-25 text-green-600";
+        else
+            return "border-slate-300 text-slate-700";
+    }
+
+    bool isAnswerSelected(int questionId)
+    {
+        return Model.SavedAnswers.ContainsKey(questionId) && Model.SavedAnswers[questionId] > 0;
+    }
+}
+
+<main class="min-h-screen bg-gray-100 p-6 md:p-10">
+    <div class="w-full rounded-lg bg-white p-4 shadow-sm">
+
+        <!-- Header -->
+        <div class="mb-6 rounded-md border border-slate-200 bg-white p-6">
+            <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                    <h1 class="text-lg font-semibold text-slate-800">@Model.ExamTitle - Review</h1>
+                    <p class="mt-1 text-sm text-slate-500">Viewing answers for: <strong>@Model.ParticipantName</strong></p>
+                </div>
+                <div class="rounded border border-slate-200 bg-slate-50 px-4 py-3">
+                    <span class="text-sm font-medium text-slate-700">Page @Model.CurrentPage of @Model.TotalPages</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Container -->
+        <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+            <!-- Questions Header -->
+            <div class="flex items-center justify-between bg-slate-100 px-4 py-3">
+                <h2 class="font-semibold text-slate-700">Questions & Answers</h2>
+                <span class="text-sm text-slate-500">Page @Model.CurrentPage of @Model.TotalPages</span>
+            </div>
+
+            <!-- Questions Content -->
+            <div class="space-y-8 p-6">
+                @{
+                    int qCounter = 10 * (Model.CurrentPage - 1) + 1;
+                    foreach (var question in Model.PageQuestions)
+                    {
+                        <div class="question-container">
+                            <div class="mb-4">
+                                <h3 class="text-lg font-medium text-slate-800">
+                                    <span class="mr-2 rounded bg-slate-100 px-2 py-1 text-sm text-slate-700">
+                                        @qCounter
+                                    </span>
+                                    @question.QuestionText
+                                    <span class="ml-2 text-sm text-slate-500">(Weight: @question.QuestionWeight)</span>
+                                </h3>
+
+                                <!-- Answer Status Indicator -->
+                                @{
+                                    var hasSelectedAnswer = isAnswerSelected(question.QuestionId);
+                                    var selectedAnswerId = hasSelectedAnswer ? Model.SavedAnswers[question.QuestionId] : 0;
+                                    var isCorrect = hasSelectedAnswer && selectedAnswerId == question.CorrectAnswerId;
+                                }
+                                <div class="mt-2 text-sm @(hasSelectedAnswer ? (isCorrect ? "text-green-600" : "text-red-600") : "text-orange-600")">
+                                    @if (hasSelectedAnswer)
+                                    {
+                                        @(isCorrect ? "✓ Correct Answer" : "✗ Incorrect Answer")
+                                    }
+                                    else
+                                    {
+                                        @("No answer selected")
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Answers Loop -->
+                            <div class="ml-6 space-y-2">
+                                @foreach (var answer in question.Answers)
+                                {
+                                    var isSelected = Model.SavedAnswers.ContainsKey(question.QuestionId)
+                                    && Model.SavedAnswers[question.QuestionId] == answer.AnswerId;
+
+                                    <div class="flex items-center">
+                                        <div class="flex w-full items-center rounded border p-3 transition @getAnswerStyle(question.QuestionId, answer.AnswerId)">
+                                            <span class="mr-3 flex h-5 w-5 items-center justify-center rounded border
+                                                                    @(isSelected && answer.AnswerId == question.CorrectAnswerId ? "border-green-500 bg-green-500" :
+                                                                                                            isSelected && answer.AnswerId != question.CorrectAnswerId ? "border-red-500 bg-red-500" :
+                                                                                                            "border-slate-400")">
+                                    @if (isSelected && answer.AnswerId == question.CorrectAnswerId)
+                                                {
+                                                    <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                }
+                                                else if (isSelected && answer.AnswerId != question.CorrectAnswerId)
+                                                {
+                                                    <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                }
+                                            </span>
+                                            @answer.AnswerText
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        qCounter++;
+                    }
+                }
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex flex-col items-center justify-between gap-4 border-t border-slate-200 p-4 md:flex-row">
+                <!-- Navigation Buttons -->
+                <div class="flex w-full gap-3 md:w-auto">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a asp-action="ParticipantExamPage"
+                           asp-route-examId="@Model.ExamId"
+                           asp-route-participantExamId="@Model.ParticipantExamId"
+                           asp-route-targetPage="@(Model.CurrentPage - 1)"
+                           class="flex w-full items-center justify-center rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-100 md:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Previous Page
+                        </a>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a asp-action="ParticipantExamPage"
+                           asp-route-examId="@Model.ExamId"
+                           asp-route-participantExamId="@Model.ParticipantExamId"
+                           asp-route-targetPage="@(Model.CurrentPage + 1)"
+                           class="flex w-full items-center justify-center rounded bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 md:w-auto">
+                            Next Page
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    }
+                </div>
+
+                <!-- Page Indicator -->
+                <div class="w-full text-center text-sm text-slate-600 md:w-auto">
+                    Page <span>@Model.CurrentPage</span> of <span>@Model.TotalPages</span>
+                </div>
+
+                <!-- Back to Results -->
+                <a asp-action="ExamResults" asp-route-examId="@Model.ExamId"
+                   class="w-full rounded bg-gray-600 px-5 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700 md:w-auto">
+                    Back to Results
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .bg-green-25 {
+        background-color: rgba(16, 185, 129, 0.05);
+    }
+</style>

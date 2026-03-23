@@ -1,0 +1,254 @@
+﻿@model UpdateQuestionVM
+
+<div class="w-full rounded-lg bg-white p-4 shadow-sm">
+    <!-- Page header -->
+    <div class="mb-4 border-b border-slate-200 pb-2">
+        <h1 class="text-lg font-semibold text-slate-800">Question <span class="text-slate-500">/ Update Question</span></h1>
+        <p class="mt-1 text-sm text-slate-500">Update question details and answers</p>
+    </div>
+
+    <!-- Content box -->
+    <div class="overflow-hidden rounded-md border border-slate-200 bg-white">
+        <!-- Box header -->
+        <div class="border-b border-slate-200 bg-slate-100 px-4 py-3">
+            <h2 class="font-semibold text-slate-700">Question Details</h2>
+        </div>
+
+        <!-- Form body -->
+        <form asp-controller="Exam" asp-action="UpdateQuestion" method="post" class="p-6">
+            <input type="hidden" asp-for="ExamId" />
+            <input type="hidden" asp-for="QuestionId" />
+
+            <div class="mb-6 text-sm text-slate-500">You should fill two answers at least</div>
+
+            <!-- Question text -->
+            <div class="mb-4">
+                <label asp-for="QuestionText" class="mb-1 block text-sm font-medium text-slate-700">Question</label>
+                <textarea asp-for="QuestionText" placeholder="Type question here ...."
+                          class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"></textarea>
+                <span asp-validation-for="QuestionText" class="text-xs text-red-500"></span>
+            </div>
+
+            <!-- Answers Container -->
+            <div id="answers-container" class="mb-4">
+                @for (int i = 0; i < Model.Answers.Count; i++)
+                {
+                    <div class="answer-field mb-3" data-answer-id="@Model.Answers[i].AnswerId">
+                        <label class="mb-1 block text-sm font-medium text-slate-700">Answer @(i + 1)</label>
+                        <div class="flex items-center">
+                            <input type="hidden" asp-for="Answers[i].AnswerId" />
+                            <input type="hidden" asp-for="Answers[i].QuestionId" />
+                            <input type="text" asp-for="Answers[i].AnswerText"
+                                   placeholder="Answer @(i + 1) text ...."
+                                   class="w-full rounded border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                            <button type="button" class="remove-answer-btn ml-2 cursor-default text-red-500 opacity-0 transition hover:text-red-700" tabindex="-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Answers[i].AnswerText" class="text-xs text-red-500"></span>
+                    </div>
+                }
+            </div>
+
+            <!-- Add Answer Button -->
+            <div class="mb-6">
+                <button type="button" id="add-answer-btn"
+                        class="flex items-center text-sky-600 transition hover:text-sky-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add Another Answer
+                </button>
+            </div>
+
+            <!-- Second Row -->
+            <div class="grid grid-cols-1 gap-6 border-t border-slate-200 pt-4 md:grid-cols-2">
+                <!-- Correct Answer -->
+                <div>
+                    <label asp-for="@Model.CorrectAnswerIndex" class="mb-1 block text-sm font-medium text-slate-700">Correct Answer</label>
+                    <select asp-for="@Model.CorrectAnswerIndex"
+                            class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                        <option value="" disabled>-- Choose The Correct Answer --</option>
+                        @for (int i = 0; i < Model.Answers.Count; i++)
+                        {
+                            <option value="@(i + 1)">Answer @(i + 1)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CorrectAnswerId" class="text-xs text-red-500"></span>
+                </div>
+
+                <!-- Question Weight -->
+                <div>
+                    <label asp-for="QuestionWeight" class="mb-1 block text-sm font-medium text-slate-700">Question Weight</label>
+                    <input type="number" asp-for="QuestionWeight" placeholder="e.g 2"
+                           class="w-full rounded border border-slate-300 p-2 text-sm text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                    <span asp-validation-for="QuestionWeight" class="text-xs text-red-500"></span>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end gap-3 border-t border-slate-200 pt-4">
+                <button type="reset"
+                        class="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-100">
+                    Reset
+                </button>
+                <button type="submit"
+                        class="rounded bg-sky-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:ring-1 focus:ring-sky-300">
+                    Update Question
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const answersContainer = document.getElementById('answers-container');
+        const addAnswerBtn = document.getElementById('add-answer-btn');
+        const correctAnswerSelect = document.getElementById('CorrectAnswerId');
+        let answerCount = @Model.Answers.Count;
+        let nextTempId = -1; // For new answers that don't have an ID yet
+
+        // Function to update remove buttons visibility
+        function updateRemoveButtons() {
+            const answerFields = answersContainer.querySelectorAll('.answer-field');
+            const removeButtons = answersContainer.querySelectorAll('.remove-answer-btn');
+
+            // Show remove buttons only if there are more than 2 answers
+            if (answerFields.length > 2) {
+                removeButtons.forEach(btn => {
+                    btn.classList.remove('opacity-0', 'cursor-default');
+                    btn.classList.add('opacity-100', 'cursor-pointer');
+                });
+            } else {
+                removeButtons.forEach(btn => {
+                    btn.classList.add('opacity-0', 'cursor-default');
+                    btn.classList.remove('opacity-100', 'cursor-pointer');
+                });
+            }
+        }
+
+        // Function to add a new answer field
+        function addAnswerField() {
+            if (answerCount >= 6) {
+                alert('Maximum of 6 answers allowed');
+                return;
+            }
+
+            answerCount++;
+            const answerId = nextTempId--;
+            const answerIndex = answerCount - 1; // Zero-based index for model binding
+
+            const newAnswerField = document.createElement('div');
+            newAnswerField.className = 'answer-field';
+            newAnswerField.setAttribute('data-answer-id', answerId);
+            newAnswerField.innerHTML = `
+                <label for="answer${answerCount}" class="mb-1 block text-sm font-medium text-slate-700">Answer ${answerCount}</label>
+                <div class="flex items-center">
+                    <input type="hidden" name="Answers[${answerIndex}].AnswerId" value="${answerId}">
+                    <input type="hidden" name="Answers[${answerIndex}].QuestionId" value="@Model.QuestionId">
+                    <input type="text" name="Answers[${answerIndex}].AnswerText"
+                        id="answer${answerCount}" placeholder="Answer ${answerCount} text ...."
+                        class="w-full rounded-sm border border-slate-300 px-2 py-1 text-slate-800 outline-none transition focus:border-sky-600 focus:ring focus:ring-sky-200">
+                    <button type="button" class="remove-answer-btn ml-2 cursor-pointer text-red-500 opacity-100 transition hover:text-red-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+            answersContainer.appendChild(newAnswerField);
+
+            // Add option to correct answer dropdown
+            const newOption = document.createElement('option');
+            newOption.value = answerId;
+            newOption.textContent = `Answer ${answerCount}`;
+            correctAnswerSelect.appendChild(newOption);
+
+            // Add event listener to the new remove button
+            const removeBtn = newAnswerField.querySelector('.remove-answer-btn');
+            removeBtn.addEventListener('click', function() {
+                removeAnswerField(newAnswerField, answerId);
+            });
+
+            updateRemoveButtons();
+        }
+
+        // Function to remove an answer field
+        function removeAnswerField(field, answerId) {
+            if (answersContainer.querySelectorAll('.answer-field').length <= 2) {
+                alert('You need at least two answers');
+                return;
+            }
+
+            // Check if we're removing the currently selected correct answer
+            if (parseInt(correctAnswerSelect.value) === answerId) {
+                alert('You cannot remove the correct answer. Please select a different correct answer first.');
+                return;
+            }
+
+            // Remove the field
+            field.remove();
+
+            // Remove the option from correct answer dropdown
+            const optionToRemove = correctAnswerSelect.querySelector(`option[value="${answerId}"]`);
+            if (optionToRemove) {
+                optionToRemove.remove();
+            }
+
+            // Re-index all remaining answers for proper model binding
+            const answerFields = answersContainer.querySelectorAll('.answer-field');
+            answerFields.forEach((field, index) => {
+                // Update labels and IDs
+                const newDisplayIndex = index + 1;
+                field.querySelector('label').textContent = `Answer ${newDisplayIndex}`;
+                field.querySelector('label').setAttribute('for', `answer${newDisplayIndex}`);
+
+                const textInput = field.querySelector('input[type="text"]');
+                textInput.id = `answer${newDisplayIndex}`;
+                textInput.placeholder = `Answer ${newDisplayIndex} text ....`;
+
+                // Update the array indices for model binding
+                textInput.name = `Answers[${index}].AnswerText`;
+
+                const hiddenIdInput = field.querySelector('input[type="hidden"][name*="AnswerId"]');
+                hiddenIdInput.name = `Answers[${index}].AnswerId`;
+
+                const hiddenQuestionIdInput = field.querySelector('input[type="hidden"][name*="QuestionId"]');
+                hiddenQuestionIdInput.name = `Answers[${index}].QuestionId`;
+
+                // Update correct answer dropdown options
+                const answerId = field.getAttribute('data-answer-id');
+                const option = correctAnswerSelect.querySelector(`option[value="${answerId}"]`);
+                if (option) {
+                    option.textContent = `Answer ${newDisplayIndex}`;
+                }
+            });
+
+            answerCount = answerFields.length;
+            updateRemoveButtons();
+        }
+
+        // Add event listener to the Add Answer button
+        addAnswerBtn.addEventListener('click', addAnswerField);
+
+        // Add event listeners to existing remove buttons
+        const removeButtons = answersContainer.querySelectorAll('.remove-answer-btn');
+        removeButtons.forEach((btn) => {
+            btn.addEventListener('click', function() {
+                const field = btn.closest('.answer-field');
+                const answerId = parseInt(field.getAttribute('data-answer-id'));
+                removeAnswerField(field, answerId);
+            });
+        });
+
+        // Initialize remove buttons visibility
+        updateRemoveButtons();
+
+        // Set the correct answer in the dropdown
+        correctAnswerSelect.value = @Model.CorrectAnswerId;
+    });
+</script>

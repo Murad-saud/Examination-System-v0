@@ -1,0 +1,58 @@
+﻿@using Examination_System.ViewModels
+@model LoginVM
+
+@{
+    Layout = "_Empty";
+}
+
+    <div class="min-h-screen bg-gradient-to-br from-sky-800 via-sky-600 to-sky-400">
+        <!-- Container -->
+        <div class="flex min-h-screen flex-col items-center justify-center">
+            <!-- Card Container -->
+            <form asp-asp-controller="Authentication" asp-action="Login" class="w-[400px] rounded-md bg-gray-50 p-4 shadow-md">
+                <div class="flex flex-col">
+                    <!-- Header -->
+                    <h1 class="mx-auto px-20 text-4xl font-bold text-blue-500">
+                        Login
+                    </h1>
+                    <div class="mx-6 mb-6 mt-3 h-1 bg-blue-500"></div>
+                    <!-- Email Address -->
+                    <div class="flex flex-col space-y-1">
+                        <label for="email" class="mx-auto text-sm font-medium text-slate-600">Email Address</label>
+                        <input asp-for="@Model.EmailAddress" type="email" id="email"
+                               class="rounded-sm border border-sky-100 px-2 py-1 text-center shadow-sm outline-none placeholder:text-slate-400 focus:border-2 focus:border-sky-500"
+                               placeholder="example@website.com">
+                    <span asp-validation-for="@Model.EmailAddress" class="-mt-2 text-sm text-red-400"></span>
+
+                    </div>
+                    <!-- Password -->
+                    <div class="mt-2 flex flex-col space-y-1">
+                        <label for="passwprd" class="mx-auto text-sm font-medium text-slate-600">Password</label>
+                        <input asp-for="@Model.Password" type="password" id="password"
+                               class="rounded-sm border border-sky-100 px-2 py-1 text-center shadow-sm outline-none placeholder:text-slate-400 focus:border-2 focus:border-sky-500"
+                               placeholder="******">
+                        <span asp-validation-for="@Model.Password" class="-mt-2 text-sm text-red-400"></span>
+                    </div>
+
+                    <!-- Remember ME -->
+                    <div class="mt-2 flex items-center justify-start space-x-2">
+                        <input asp-for="@Model.RememberMe" type="checkbox" id="rememberMe">
+                        <label for="rememberMe" class="text-sm font-medium text-slate-600">Remember Me</label>
+                    </div>
+
+                    <div class="mt-2 text-sm text-slate-600">Dont't have an account?
+                        <a asp-controller="Authentication" asp-action="Register" class="text-blue-500 no-underline">Register Now</a>
+                    </div>
+
+
+
+                    <button type="submit"
+                            class="mt-1 border-2 border-blue-500 bg-blue-500 py-2 text-gray-50 duration-100 hover:bg-opacity-0 hover:text-blue-600">
+                        Login
+                    </button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>

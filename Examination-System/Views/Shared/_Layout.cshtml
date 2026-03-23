@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Examination_System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .sidebar-transition {
+            transition: all 0.25s ease-in-out;
+        }
+
+        .content-transition {
+            transition: margin-left 0.25s ease-in-out;
+        }
+
+        .sidebar-collapsed {
+            width: 0 !important;
+            overflow: hidden;
+            border-right: none;
+        }
+
+            .sidebar-collapsed .sidebar-text {
+                display: none !important;
+            }
+
+            .sidebar-collapsed .logo-text {
+                display: none !important;
+            }
+
+            .sidebar-collapsed .user-name,
+            .sidebar-collapsed .user-role {
+                display: none !important;
+            }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans">
+    <!-- Main Container -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Overlay (Mobile Only) -->
+        <div id="sidebar-overlay"
+             class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+             style="display: none"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar"
+               class="sidebar-transition fixed z-30 h-full w-64 flex-shrink-0 border-r border-slate-200 bg-white shadow-sm lg:relative">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between border-b border-slate-200 p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex h-8 w-8 items-center justify-center rounded bg-sky-600">
+                        <i class="fas fa-file-alt text-white"></i>
+                    </div>
+                    <span class="logo-text text-lg font-semibold text-slate-800">Examination System</span>
+                </div>
+                <button id="sidebar-close-mobile"
+                        class="rounded p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Sidebar Content -->
+            <div class="h-[calc(100%-4rem)] no-scrollbar flex flex-col overflow-y-auto">
+                <!-- User Profile -->
+                <div class="border-b border-slate-200 p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-slate-100">
+                            <i class="fas fa-user text-slate-700"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="user-name truncate text-sm font-medium text-slate-800">
+                                Admin User 01
+                            </p>
+                            <p class="user-role text-xs text-slate-500">Admin</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="flex-1 p-4">
+                    <div class="space-y-1">
+                        <a href="#"
+                           class="flex items-center space-x-3 rounded bg-sky-50 px-3 py-2.5 text-sm font-medium text-sky-700">
+                            <i class="fas fa-tachometer-alt w-5 text-center text-sky-600"></i>
+                            <span class="sidebar-text">Dashboard</span>
+                        </a>
+
+                        <a href="#"
+                           class="flex items-center space-x-3 rounded px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                            <i class="fas fa-users w-5 text-center text-slate-600"></i>
+                            <span class="sidebar-text">Users</span>
+                        </a>
+
+                        <a href="#"
+                           class="flex items-center space-x-3 rounded px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                            <i class="fas fa-book w-5 text-center text-slate-600"></i>
+                            <span class="sidebar-text">Courses</span>
+                        </a>
+
+                        <a href="#"
+                           class="flex items-center space-x-3 rounded px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                            <i class="fas fa-file-alt w-5 text-center text-slate-600"></i>
+                            <span class="sidebar-text">Exams</span>
+                        </a>
+
+                        <a href="#"
+                           class="flex items-center space-x-3 rounded px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                            <i class="fas fa-clock w-5 text-center text-slate-600"></i>
+                            <span class="sidebar-text">Pending Requests</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Sidebar Footer -->
+                <div class="border-t border-slate-200 p-4">
+                    <a href="#"
+                       class="flex items-center space-x-3 rounded px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                        <i class="fas fa-sign-out-alt w-5 text-center text-slate-600"></i>
+                        <span class="sidebar-text">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="content-transition flex flex-1 flex-col overflow-hidden">
+            <!-- Top Navbar -->
+            <!-- Navbar with Breadcrumb -->
+            <header class="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2.5 shadow-sm">
+                <!-- Left side with Breadcrumb -->
+                <div class="flex items-center space-x-3">
+                    <button id="sidebar-toggle"
+                            class="rounded p-1.5 text-slate-700 hover:bg-slate-100">
+                        <i id="toggle-icon" class="fas fa-bars text-lg"></i>
+                    </button>
+
+                    <!-- Breadcrumb -->
+                    <div class="hidden items-center text-sm text-slate-600 md:flex">
+                        <a href="#" class="hover:text-sky-600">Admin</a>
+                        <span class="mx-2">/</span>
+                        <span class="font-medium text-slate-800">User Management</span>
+                    </div>
+                </div>
+
+                <!-- Right side with Date and User -->
+                <div class="flex items-center space-x-4">
+                    <!-- Date -->
+                    <div class="text-sm text-slate-600">
+                        <i class="far fa-calendar mr-1"></i>
+                        <span id="current-date">12/15/2023</span>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <button id="user-menu-button"
+                                class="flex items-center space-x-2 rounded p-1 hover:bg-slate-100">
+                            <div class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-slate-100">
+                                <i class="fas fa-user text-slate-700"></i>
+                            </div>
+                            <div class="hidden text-sm text-slate-700 md:block">
+                                <div class="font-medium">Admin User 01</div>
+                                <div class="text-xs text-slate-500">Admin</div>
+                            </div>
+                            <i class="fas fa-chevron-down hidden text-xs text-slate-500 md:block"></i>
+                        </button>
+
+                        <!-- User Dropdown -->
+                        <div id="user-dropdown"
+                             class="absolute right-0 z-10 mt-2 hidden w-48 rounded-md border border-slate-200 bg-white shadow-lg">
+                            <div class="border-b border-slate-200 p-3">
+                                <p class="text-sm font-medium text-slate-800">Admin User 01</p>
+                                <p class="text-xs text-slate-500">Admin</p>
+                            </div>
+                            <div class="py-1">
+                                <a href="#"
+                                   class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
+                                    My Profile
+                                </a>
+                                <a href="#"
+                                   class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
+                                    Settings
+                                </a>
+                                <div class="border-t border-slate-200"></div>
+                                <a asp-controller="Authentication" asp-action="Logout"
+                                   class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto bg-gray-100 p-6">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // DOM Elements
+        const sidebar = document.getElementById("sidebar");
+        const sidebarToggle = document.getElementById("sidebar-toggle");
+        const toggleIcon = document.getElementById("toggle-icon");
+        const sidebarClose = document.getElementById("sidebar-close-mobile");
+        const sidebarOverlay = document.getElementById("sidebar-overlay");
+        const currentDateElement = document.getElementById("current-date");
+        const userMenuButton = document.getElementById("user-menu-button");
+        const userDropdown = document.getElementById("user-dropdown");
+
+        // Set current date in MM/DD/YYYY format
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const year = now.getFullYear();
+        currentDateElement.textContent = `${day}/${month}/${year}`;
+
+        // Sidebar state
+        let sidebarOpen = true;
+
+        // Toggle sidebar visibility
+        function toggleSidebar() {
+            if (window.innerWidth < 1024) {
+                // Mobile behavior
+                if (sidebar.classList.contains("-translate-x-full")) {
+                    sidebar.classList.remove("-translate-x-full");
+                    sidebarOverlay.style.display = "block";
+                    toggleIcon.classList.remove("fa-bars");
+                    toggleIcon.classList.add("fa-times");
+                } else {
+                    sidebar.classList.add("-translate-x-full");
+                    sidebarOverlay.style.display = "none";
+                    toggleIcon.classList.remove("fa-times");
+                    toggleIcon.classList.add("fa-bars");
+                }
+            } else {
+                // Desktop behavior - collapse/expand
+                sidebarOpen = !sidebarOpen;
+
+                if (sidebarOpen) {
+                    // Expand sidebar
+                    sidebar.classList.remove("sidebar-collapsed");
+                    sidebar.style.width = "16rem";
+                    toggleIcon.classList.remove("fa-bars");
+                    toggleIcon.classList.add("fa-times");
+                } else {
+                    // Collapse sidebar completely
+                    sidebar.classList.add("sidebar-collapsed");
+                    sidebar.style.width = "0";
+                    toggleIcon.classList.remove("fa-times");
+                    toggleIcon.classList.add("fa-bars");
+                }
+            }
+        }
+
+        // Close sidebar (mobile)
+        function closeSidebar() {
+            sidebar.classList.add("-translate-x-full");
+            sidebarOverlay.style.display = "none";
+            toggleIcon.classList.remove("fa-times");
+            toggleIcon.classList.add("fa-bars");
+        }
+
+        // Toggle user dropdown
+        function toggleUserDropdown() {
+            userDropdown.classList.toggle("hidden");
+        }
+
+        // Close user dropdown when clicking outside
+        function closeUserDropdown(event) {
+            if (
+                !userMenuButton.contains(event.target) &&
+                !userDropdown.contains(event.target)
+            ) {
+                userDropdown.classList.add("hidden");
+            }
+        }
+
+        // Event listeners
+        sidebarToggle.addEventListener("click", toggleSidebar);
+        sidebarClose.addEventListener("click", closeSidebar);
+        sidebarOverlay.addEventListener("click", closeSidebar);
+        userMenuButton.addEventListener("click", toggleUserDropdown);
+        document.addEventListener("click", closeUserDropdown);
+
+        // Handle window resize
+        window.addEventListener("resize", function () {
+            if (window.innerWidth >= 1024) {
+                // Large screen: ensure sidebar is visible
+                sidebar.classList.remove("-translate-x-full");
+                sidebarOverlay.style.display = "none";
+
+                // Reset to expanded state on desktop
+                if (!sidebarOpen) {
+                    sidebarOpen = true;
+                    sidebar.classList.remove("sidebar-collapsed");
+                    sidebar.style.width = "16rem";
+                }
+                // Set icon to X when sidebar is open
+                toggleIcon.classList.remove("fa-bars");
+                toggleIcon.classList.add("fa-times");
+            } else {
+                // Small screen: ensure sidebar is hidden by default
+                sidebar.classList.add("-translate-x-full");
+                sidebar.classList.remove("sidebar-collapsed");
+                sidebar.style.width = "16rem";
+                // Set icon to bars when sidebar is closed on mobile
+                toggleIcon.classList.remove("fa-times");
+                toggleIcon.classList.add("fa-bars");
+            }
+        });
+
+        // Initialize based on screen size
+        if (window.innerWidth < 1024) {
+            sidebar.classList.add("-translate-x-full");
+            toggleIcon.classList.remove("fa-times");
+            toggleIcon.classList.add("fa-bars");
+        } else {
+            // Desktop: sidebar is open, show X icon
+            toggleIcon.classList.remove("fa-bars");
+            toggleIcon.classList.add("fa-times");
+        }
+    </script>
+</body>
+</html>
